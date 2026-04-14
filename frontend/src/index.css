@@ -1,0 +1,28 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  /* Prevent iOS auto-zoom on inputs */
+  touch-action: manipulation;
+}
+
+body {
+  background: #1a0a00;
+  color: #f5e6c8;
+  font-family: "Georgia", serif;
+  font-size: 16px; /* base size — good for pensioners */
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Prevent text from being too small on mobile */
+input, button, select, textarea {
+  font-size: max(16px, 1em); /* prevents iOS zoom on focus */
+}
+
+#root {
+  min-height: 100vh;
+}

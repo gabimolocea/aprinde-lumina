@@ -1,0 +1,222 @@
+.wall {
+  padding: 0.75rem 0;
+}
+
+/* ========== Demo banner ========== */
+.wall__demo-banner {
+  background: rgba(247, 165, 0, 0.12);
+  border: 1px solid rgba(247, 165, 0, 0.4);
+  border-radius: 8px;
+  color: #f7c948;
+  font-size: 0.82rem;
+  text-align: center;
+  padding: 0.45rem 0.75rem;
+  margin-bottom: 0.6rem;
+  letter-spacing: 0.02em;
+}
+
+/* ========== Section headers — sticky below main header ========== */
+.wall__section-headers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-bottom: 4px;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #120600;
+  padding: 4px 0 2px;
+}
+
+.wall__section-header {
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  padding: 0.25rem;
+  border-radius: 5px 5px 0 0;
+  opacity: 0.85;
+}
+
+.wall__section-header--morti {
+  background: rgba(15, 15, 15, 0.7);
+  color: #aaaaaa;
+  border: 1px solid rgba(80, 80, 80, 0.4);
+  border-bottom: none;
+}
+
+.wall__section-header--vii {
+  background: rgba(247, 165, 0, 0.1);
+  color: #f7c948;
+  border: 1px solid rgba(247, 165, 0, 0.25);
+  border-bottom: none;
+}
+
+/* ========== BODY / ROW / HALF layout ========== */
+.wall__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wall__row {
+  display: flex;
+  gap: 4px;
+}
+
+/* Each half is a mini-grid that always stays on its side */
+.wall__half {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+  min-width: 0;
+}
+
+/* Visual divider between Morți (left) and Vii (right) */
+.wall__half--vii {
+  border-left: 2px solid rgba(255, 255, 255, 0.08);
+  padding-left: 4px;
+}
+
+@media (min-width: 481px) {
+  .wall__half { grid-template-columns: repeat(3, 1fr); gap: 5px; }
+  .wall__row  { gap: 5px; }
+  .wall__half--vii { padding-left: 5px; }
+}
+
+@media (min-width: 769px) {
+  .wall__half { grid-template-columns: repeat(12, 1fr); gap: 6px; }
+  .wall__row  { gap: 8px; }
+  .wall__half--vii { padding-left: 8px; }
+}
+
+/* ========== SLOTS ========== */
+.wall__slot {
+  aspect-ratio: 1 / 1.7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.15s, transform 0.1s;
+  position: relative;
+  min-height: 68px;
+  overflow: visible;
+}
+
+.wall__slot:hover,
+.wall__slot:focus-visible {
+  outline: none;
+  transform: scale(1.05);
+  z-index: 2;
+}
+
+.wall__slot--morti-top    { background: rgba(20, 20, 20, 0.55);  border: 1px solid rgba(80, 80, 80, 0.35); }
+.wall__slot--morti-bottom { background: rgba(10, 10, 10, 0.45);  border: 1px solid rgba(60, 60, 60, 0.28);  }
+.wall__slot--vii-top      { background: rgba(247, 165, 0, 0.07);  border: 1px solid rgba(247, 165, 0, 0.13); }
+.wall__slot--vii-bottom   { background: rgba(180, 110, 10, 0.05); border: 1px solid rgba(200, 140, 30, 0.1);  }
+
+.wall__slot--morti-top:hover,
+.wall__slot--morti-bottom:hover { background: rgba(50, 50, 50, 0.7); }
+.wall__slot--vii-top:hover,
+.wall__slot--vii-bottom:hover   { background: rgba(247, 165, 0, 0.2);  }
+
+/* Blink highlight on the slot just lit by the user */
+.wall__slot--just-lit {
+  animation: slot-just-lit 6s ease-out forwards;
+}
+
+@keyframes slot-just-lit {
+  0%   { outline: 3px solid rgba(255, 240, 80, 1);    background: rgba(255, 220, 50, 0.55); box-shadow: 0 0 14px 4px rgba(255, 180, 0, 0.8); }
+  12%  { outline: 3px solid transparent;               background: transparent;              box-shadow: none; }
+  24%  { outline: 3px solid rgba(255, 240, 80, 1);    background: rgba(255, 220, 50, 0.55); box-shadow: 0 0 14px 4px rgba(255, 180, 0, 0.8); }
+  36%  { outline: 3px solid transparent;               background: transparent;              box-shadow: none; }
+  48%  { outline: 3px solid rgba(255, 240, 80, 0.8);  background: rgba(255, 200, 40, 0.35); box-shadow: 0 0 10px 2px rgba(255, 150, 0, 0.5); }
+  64%  { outline: 3px solid transparent;               background: transparent;              box-shadow: none; }
+  78%  { outline: 3px solid rgba(255, 240, 80, 0.4);  background: rgba(255, 180, 30, 0.15); box-shadow: none; }
+  100% { outline: none;                                background: transparent;              box-shadow: none; }
+}
+
+/* ========== Inline ad slots (replace candles inside half-grid) ========== */
+.wall__slot-ad {
+  grid-column: span 2;
+  aspect-ratio: unset;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  background: rgba(30, 30, 30, 0.5);
+  border: 1px dashed rgba(120, 120, 120, 0.3);
+  min-height: 68px;
+  overflow: hidden;
+  position: relative;
+}
+
+@media (min-width: 481px) { .wall__slot-ad { grid-column: span 3; } }
+@media (min-width: 769px) { .wall__slot-ad { grid-column: span 4; } }
+
+.wall__slot-ad-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  position: relative;
+}
+
+/* subtle cross-hatch texture */
+.wall__slot-ad-inner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      rgba(255,255,255,0.015) 0px,
+      rgba(255,255,255,0.015) 1px,
+      transparent 1px,
+      transparent 8px
+    );
+  pointer-events: none;
+}
+
+.wall__ad-placeholder-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(180, 180, 180, 0.5);
+  letter-spacing: 0.06em;
+  position: relative;
+}
+
+.wall__ad-placeholder-tag {
+  font-size: 0.58rem;
+  color: rgba(140, 140, 140, 0.4);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  position: relative;
+}
+
+/* ========== Infinite scroll ========== */
+.wall__sentinel {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wall__loading {
+  color: #c8a06a;
+  font-style: italic;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50%       { opacity: 1; }
+}
+

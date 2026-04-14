@@ -1,0 +1,94 @@
+.header {
+  padding: 0.5rem 1rem 0.5rem;
+  background: linear-gradient(180deg, #2c1000 0%, #1a0a00 100%);
+  border-bottom: 1px solid #5a2d00;
+  overflow: visible;
+}
+
+.header__top {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  overflow: visible;
+}
+
+.header__title {
+  font-size: clamp(1.2rem, 5vw, 2rem);
+  color: #f7c948;
+  text-shadow: 0 0 20px #f7a500, 0 0 40px #f76500;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  overflow: visible;
+}
+
+.header__candle-count {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: #f7c948;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+/* Wrapper for a real Candle component used as a decorative icon */
+.header__deco-candle {
+  position: relative;
+  display: inline-block;
+  width: 14px;
+  height: 46px; /* flame 30 + wick 10 + bottom-offset 6, no wax */
+  flex-shrink: 0;
+  overflow: visible;
+  vertical-align: bottom;
+}
+
+/* Scale down and hide wax for decorative use */
+.header__deco-candle .candle {
+  scale: 0.55;
+  transform-origin: 50% 100%;
+}
+.header__deco-candle .candle__wax {
+  display: none;
+}
+
+.header__logout {
+  margin-left: 0.75rem;
+  background: none;
+  border: 1px solid #5a2d00;
+  border-radius: 6px;
+  color: #c8a06a;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.7rem;
+  cursor: pointer;
+  font-family: inherit;
+  touch-action: manipulation;
+  transition: background 0.15s;
+}
+
+.header__logout:hover {
+  background: rgba(247, 165, 0, 0.1);
+}
+
+.header__login-btn {
+  margin-left: auto;
+  background: linear-gradient(135deg, #f7a500, #e05c00);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.85rem;
+  font-family: inherit;
+  font-weight: bold;
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: opacity 0.15s;
+}
+
+.header__login-btn:hover {
+  opacity: 0.88;
+}
+
+
