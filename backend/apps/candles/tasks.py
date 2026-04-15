@@ -67,3 +67,19 @@ def cleanup_pending_candles():
         created_at__lte=cutoff,
     ).delete()
     return f"Cleaned up {deleted} stale pending candles."
+
+
+@shared_task
+def auto_seed_candles(count=100):
+    """
+    Auto-light `count` random candles across the wall.
+    Scheduled every 12 hours via Celery Beat (configure in Django admin
+    under Periodic Tasks, or via Railway cron service).
+    """
+    from django.core.management import call_command
+    from io import StringIO
+
+    out = StringIO()
+    call_command("seed_candles_random", count=count, stdout=out)
+    return out.getvalue().strip()
+

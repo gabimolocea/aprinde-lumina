@@ -6,6 +6,8 @@ from django.conf import settings
 import uuid
 from .models import Candle
 from .serializers import CandleListSerializer, CandleDetailSerializer, CandleCreateSerializer
+from apps.analytics.models import CandleEvent, mask_ip, mask_phone
+from apps.analytics.middleware import VisitLoggerMiddleware
 
 # Wall dimensions (can be moved to settings)
 WALL_TOTAL_ROWS = 200  # virtual rows for infinite scroll pages
@@ -78,6 +80,20 @@ class CandleCreateView(APIView):
                 status=Candle.Status.PENDING,
             )
             candle.activate()
+            try:
+                CandleEvent.objects.create(
+                    kind=CandleEvent.Kind.DEMO,
+                    phone_masked=mask_phone(getattr(request.user, 'phone', '') or ''),
+                    requester_name=getattr(request.user, 'display_name', '') or '',
+                    dedicated_to_name=data.get('dedicated_to_name', ''),
+                    col=col,
+                    row=data['row'],
+                    dedication_type=dedication_type,
+                    ip=mask_ip(VisitLoggerMiddleware._get_ip(request)),
+                    referer=request.META.get('HTTP_REFERER', '')[:500],
+                )
+            except Exception:
+                pass
             return Response(
                 {
                     "candle_id": candle.id,
@@ -229,6 +245,20 @@ class CandleFreeCreateView(APIView):
             status=Candle.Status.PENDING,
         )
         candle.activate()
+        try:
+            CandleEvent.objects.create(
+                kind=CandleEvent.Kind.FREE,
+                phone_masked=mask_phone(phone),
+                requester_name=requester_name,
+                dedicated_to_name=dedicated_to_name,
+                col=col,
+                row=row,
+                dedication_type=dedication_type,
+                ip=mask_ip(VisitLoggerMiddleware._get_ip(request)),
+                referer=request.META.get('HTTP_REFERER', '')[:500],
+            )
+        except Exception:
+            pass
 
         return Response(
             {"candle_id": candle.id, "free": True},

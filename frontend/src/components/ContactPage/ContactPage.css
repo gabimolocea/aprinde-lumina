@@ -1,0 +1,112 @@
+.contact-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #1a0a00 0%, #120600 100%);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2rem 1rem 4rem;
+}
+
+.contact-page__card {
+  width: 100%;
+  max-width: 520px;
+  background: #2c1000;
+  border: 1px solid #5a2d00;
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  color: #f5e6c8;
+}
+
+.contact-page__back {
+  display: inline-block;
+  color: #c8a06a;
+  font-size: 0.85rem;
+  text-decoration: none;
+  margin-bottom: 1.25rem;
+}
+.contact-page__back:hover { color: #f7c948; }
+
+.contact-page__title {
+  font-size: 1.6rem;
+  color: #f7c948;
+  text-shadow: 0 0 16px #f7a50088;
+  margin-bottom: 0.35rem;
+}
+
+.contact-page__sub {
+  font-size: 0.95rem;
+  color: #c8a06a;
+  margin-bottom: 1.75rem;
+  font-style: italic;
+}
+
+.contact-page__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.contact-page__label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 1rem;
+  color: #d4b896;
+}
+
+.contact-page__input {
+  background: #1a0a00;
+  border: 1px solid #5a2d00;
+  border-radius: 8px;
+  padding: 0.75rem 0.9rem;
+  color: #f5e6c8;
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.contact-page__input:focus { border-color: #f7a500; }
+
+.contact-page__textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
+.contact-page__error {
+  color: #ff8080;
+  font-size: 0.9rem;
+  background: rgba(255, 0, 0, 0.08);
+  border-radius: 6px;
+  padding: 0.6rem 0.75rem;
+}
+
+.contact-page__btn {
+  background: linear-gradient(135deg, #f7a500, #e05c00);
+  border: none;
+  border-radius: 10px;
+  padding: 0.9rem 1.5rem;
+  color: #fff;
+  font-size: 1.05rem;
+  font-family: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: opacity 0.2s;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+.contact-page__btn:disabled { opacity: 0.6; cursor: default; }
+.contact-page__btn:hover:not(:disabled) { opacity: 0.88; }
+
+.contact-page__success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.5rem 0;
+  font-size: 1.1rem;
+  color: #a8e6a0;
+  text-align: center;
+}

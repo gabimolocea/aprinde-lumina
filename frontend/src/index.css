@@ -7,12 +7,13 @@
 html {
   /* Prevent iOS auto-zoom on inputs */
   touch-action: manipulation;
+  overflow-x: clip;
 }
 
 body {
   background: #1a0a00;
   color: #f5e6c8;
-  font-family: "Georgia", serif;
+  font-family: "Inter", sans-serif;
   font-size: 16px; /* base size — good for pensioners */
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;

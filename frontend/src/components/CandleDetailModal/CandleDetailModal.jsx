@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { fetchCandleDetail } from "../../services/api";
+import Candle from "../Candle/Candle";
 import "./CandleDetailModal.css";
 
 function formatTimeLeft(expiresAt) {
@@ -49,7 +50,7 @@ export default function CandleDetailModal({ candleId, onClose }) {
 
         {candle && (
           <>
-            <div className="detail__flame-icon" aria-hidden="true">🕯</div>
+            <div className="detail__flame-icon" aria-hidden="true"><Candle candle={candle} /></div>
             <h2 className="modal__title">{candle.dedicated_to_name}</h2>
             <p className="detail__type">
               {candle.dedication_type === "viu" ? "Lumânare pentru vii" : "Lumânare pentru morți"}

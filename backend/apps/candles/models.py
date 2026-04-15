@@ -25,7 +25,7 @@ class Candle(models.Model):
 
     class Dedication(models.TextChoices):
         VIU = "viu", "Pentru vii"
-        MORT = "mort", "Pentru morți"
+        MORT = "mort", "Pentru adormiți"
 
     # --- Owner ---
     user = models.ForeignKey(

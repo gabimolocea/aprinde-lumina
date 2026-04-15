@@ -11,6 +11,12 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+/** Submit a contact form message */
+export async function submitContact({ name, email, phone, message }) {
+  const { data } = await api.post("/api/contact/", { name, email, phone, message });
+  return data;
+}
+
 /** Fetch active candles within a row window */
 export async function fetchCandles({ rowMin, rowMax }) {
   const { data } = await api.get("/api/candles/", {

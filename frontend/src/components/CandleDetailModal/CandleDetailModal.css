@@ -3,10 +3,21 @@
 }
 
 .detail__flame-icon {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-  display: block;
-  animation: float 2s ease-in-out infinite alternate;
+  position: relative;
+  height: 80px;
+  margin-bottom: 0.75rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.detail__flame-icon .candle {
+  scale: 1.5;
+  transform-origin: 50% 100%;
+}
+
+.detail__flame-icon .candle__wax {
+  display: none;
 }
 
 .detail__type {

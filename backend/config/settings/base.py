@@ -20,6 +20,8 @@ INSTALLED_APPS = [
     "apps.accounts",
     "apps.candles",
     "apps.payments",
+    "apps.contact",
+    "apps.analytics",
     "rest_framework.authtoken",
 ]
 
@@ -33,6 +35,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "apps.analytics.middleware.VisitLoggerMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"

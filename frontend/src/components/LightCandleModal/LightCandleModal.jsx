@@ -20,7 +20,7 @@ export default function LightCandleModal({ slot, onClose, onLit }) {
   // Derive zone info from slot position
   const splitCol = meta?.split_col ?? 6;
   const isMorti = slot.col < splitCol;
-  const dedicatiaLabel = isMorti ? "✝ Pentru Morți" : "☀ Pentru Vii";
+  const dedicatiaLabel = isMorti ? "Pentru Adormiți" : "Pentru Vii";
   const isDemoMode = meta?.demo_mode ?? true;
   const decoCandle = { col: slot.col, row: slot.row, dedication_type: isMorti ? "morti" : "vii", has_photo: false };
 
@@ -71,13 +71,13 @@ export default function LightCandleModal({ slot, onClose, onLit }) {
             <div className="modal__success-icon"><Candle candle={decoCandle} /></div>
             <h2 className="modal__title">Ai deja o lumânare aprinsă</h2>
             <p className="modal__sub">
-              Fiecare persoană poate apărnde <strong>o lumânare gratuită</strong> simultan.<br />
+              Fiecare persoană poate aprinde <strong>o lumânare gratuită</strong> simultan.<br />
               După ce lumânarea ta se stinge (12 ore), poți aprinde alta gratuit.
             </p>
             <p className="modal__sub" style={{ marginTop: "0.5rem", color: "#f7c948" }}>
-              ✨ Vrei să aprinzi mai multe? Contactează-ne pentru opțiuni cu plată.
+              Vrei să aprinzi mai multe? Contactează-ne pentru opțiuni cu plată.
             </p>
-            <button className="modal__btn" onClick={onClose}>Am ënțeles</button>
+            <button className="modal__btn" onClick={onClose}>Am înțeles</button>
           </div>
         )}
 
@@ -85,9 +85,9 @@ export default function LightCandleModal({ slot, onClose, onLit }) {
         {step === STEPS.FREE && (
           <>
             <div className="modal__flame" aria-hidden="true"><Candle candle={decoCandle} /></div>
-            <h2 className="modal__title">Aprinde o lumânare <span className="modal__free-badge">GRATUIT</span></h2>
+            <h2 className="modal__title">Aprinde o lumânare {dedicatiaLabel}</h2>
             <p className="modal__sub">
-              {dedicatiaLabel}<br />Completează datele de mai jos — lumânarea se aprinde instant, gratuit.
+              Complet ează datele de mai jos — lumânarea se aprinde instant, gratuit.
             </p>
             <form onSubmit={handleFreeSubmit} className="modal__form">
               <label className="modal__label">
@@ -129,7 +129,7 @@ export default function LightCandleModal({ slot, onClose, onLit }) {
               </label>
               {error && <p className="modal__error">{error}</p>}
               <button className="modal__btn modal__btn--free" type="submit" disabled={submitting}>
-                {submitting ? "Se aprinde..." : "Aprinde GRATUIT 🕯"}
+                {submitting ? "Se aprinde..." : "Aprinde lumânare"}
               </button>
             </form>
           </>
@@ -143,7 +143,7 @@ export default function LightCandleModal({ slot, onClose, onLit }) {
             <p className="modal__sub">
               Lumânarea pentru <strong>{freeForm.dedicated_to_name}</strong> va arde 12 ore.
               {freeForm.phone
-                ? " Vei primi un SMS de reînnêire după 12 ore."
+                ? " Vei primi un SMS de reînnoire după 12 ore."
                 : !isDemoMode
                   ? " Vei primi un SMS când este pe cale să se stingă."
                   : " (Mod Demo)"}

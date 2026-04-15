@@ -4,11 +4,22 @@ import { useWallMeta } from "../../hooks/useWallMeta";
 import Candle from "../Candle/Candle";
 import "./Wall.css";
 
-const COLS = 24;
-const AD_SPAN = 4; // candle slots replaced by inline ad element (desktop: 4 of 12 per half)
+/* Shared placeholder shown when AdSense is not configured */
+function AdPlaceholder({ width, height }) {
+  return (
+    <div className="wall__ad-placeholder" style={{ width: width + "px", height: height + "px" }}>
+      <span className="wall__ad-placeholder-label">{width}×{height}</span>
+      <a href="/contact" className="wall__ad-placeholder-link">
+        Contactează-ne pentru a pune reclama ta aici
+      </a>
+    </div>
+  );
+}
 
-// Seeded pseudo-random ad placement — stable per session, predictable positions
-// Uses a simple LCG so the pattern is consistent across re-renders without useState
+const COLS = 24;
+const AD_SPAN = 4; // inline ad slots per half-grid (desktop)
+
+// Seeded pseudo-random inline ad placement for desktop
 function buildAdRows(maxRow = 400) {
   let seed = 0xdeadbeef;
   const lcg = () => {
@@ -18,50 +29,109 @@ function buildAdRows(maxRow = 400) {
   const morti = new Set();
   const vii   = new Set();
   for (let r = 5; r < maxRow; ) {
-    r += 4 + Math.floor(lcg() * 5); // gap: 4–8 rows
-    if (r < maxRow) {
-      (lcg() < 0.5 ? morti : vii).add(r);
-    }
+    r += 4 + Math.floor(lcg() * 5);
+    if (r < maxRow) (lcg() < 0.5 ? morti : vii).add(r);
   }
   return { morti, vii };
 }
 const AD_ROWS = buildAdRows(400);
 
 // Înlocuiește valorile de mai jos cu cele din contul tău AdSense
-// data-ad-client  → publisher ID (ca-pub-XXXXXXXXXXXXXXXXX)
-// data-ad-slot    → slot ID din panoul AdSense (10 cifre)
 const ADSENSE_CLIENT = "ca-pub-XXXXXXXXXXXXXXXXX";
 const ADSENSE_SLOTS = ["1234567890", "0987654321", "1122334455", "5544332211"];
 
 const IS_ADSENSE_READY = !ADSENSE_CLIENT.includes("XXXXX");
 
-// Ad formats rotating between slots
-const AD_FORMATS = [
-  { width: 300, height: 250, label: "300×250" },  // Medium Rectangle
-  { width: 320, height: 50,  label: "320×50" },   // Mobile Banner
-  { width: 300, height: 250, label: "300×250" },
-  { width: 468, height: 60,  label: "468×60" },   // Full Banner
+// Mobile full-width banner (every 5 rows)
+const MOBILE_FORMATS = [
+  { width: 320, height: 50 },
+  { width: 300, height: 250 },
 ];
 
-const InlineAd = memo(function InlineAd({ adIndex }) {
+// Desktop inline ad formats
+const DESKTOP_FORMATS = [
+  { width: 300, height: 250 },
+  { width: 320, height: 50  },
+  { width: 300, height: 250 },
+  { width: 468, height: 60  },
+];
+
+/* Banner above the grid: 320×50 mobile / 728×90 desktop */
+const TopBanner = memo(function TopBanner() {
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!IS_ADSENSE_READY) return;
+    try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (_) {}
+  }, []);
+  return (
+    <div className="wall__top-banner" ref={ref}>
+      {IS_ADSENSE_READY ? (
+        <ins className="adsbygoogle"
+          style={{ display: "block" }}
+          data-ad-client={ADSENSE_CLIENT}
+          data-ad-slot={ADSENSE_SLOTS[3]}
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        />
+      ) : (
+        <>
+          <div className="wall__top-banner-inner wall__top-banner-inner--mobile">
+            <AdPlaceholder width={320} height={50} />
+          </div>
+          <div className="wall__top-banner-inner wall__top-banner-inner--desktop">
+            <AdPlaceholder width={728} height={90} />
+          </div>
+        </>
+      )}
+    </div>
+  );
+});
+
+/* Mobile-only full-width banner row */
+const BannerAd = memo(function BannerAd({ adIndex }) {
   const ref = useRef(null);
   const slot = ADSENSE_SLOTS[adIndex % ADSENSE_SLOTS.length];
-  const fmt = AD_FORMATS[adIndex % AD_FORMATS.length];
-
+  const fmt = MOBILE_FORMATS[adIndex % MOBILE_FORMATS.length];
   useEffect(() => {
     if (!IS_ADSENSE_READY) return;
     try {
-      if (ref.current && ref.current.offsetWidth > 0) {
+      if (ref.current && ref.current.offsetWidth > 0)
         (window.adsbygoogle = window.adsbygoogle || []).push({});
-      }
     } catch (_) {}
   }, []);
+  return (
+    <div className="wall__banner-ad wall__banner-ad--mobile-only" ref={ref}>
+      {IS_ADSENSE_READY ? (
+        <ins className="adsbygoogle"
+          style={{ display: "inline-block", width: `${fmt.width}px`, height: `${fmt.height}px` }}
+          data-ad-client={ADSENSE_CLIENT}
+          data-ad-slot={slot}
+        />
+      ) : (
+        <div className="wall__banner-ad-inner" style={{ width: fmt.width + "px", height: fmt.height + "px" }}>
+          <AdPlaceholder width={fmt.width} height={fmt.height} />
+        </div>
+      )}
+    </div>
+  );
+});
 
+/* Desktop-only inline ad inside half-grid */
+const InlineAd = memo(function InlineAd({ adIndex }) {
+  const ref = useRef(null);
+  const slot = ADSENSE_SLOTS[adIndex % ADSENSE_SLOTS.length];
+  const fmt = DESKTOP_FORMATS[adIndex % DESKTOP_FORMATS.length];
+  useEffect(() => {
+    if (!IS_ADSENSE_READY) return;
+    try {
+      if (ref.current && ref.current.offsetWidth > 0)
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (_) {}
+  }, []);
   return (
     <div className="wall__slot-ad" ref={ref}>
       {IS_ADSENSE_READY ? (
-        <ins
-          className="adsbygoogle"
+        <ins className="adsbygoogle"
           style={{ display: "block", width: "100%", height: "100%" }}
           data-ad-client={ADSENSE_CLIENT}
           data-ad-slot={slot}
@@ -70,8 +140,7 @@ const InlineAd = memo(function InlineAd({ adIndex }) {
         />
       ) : (
         <div className="wall__slot-ad-inner">
-          <span className="wall__ad-placeholder-label">{fmt.label}</span>
-          <span className="wall__ad-placeholder-tag">Publicitate</span>
+          <AdPlaceholder width={fmt.width} height={fmt.height} />
         </div>
       )}
     </div>
@@ -101,12 +170,7 @@ export default function Wall({ onEmptySlotClick, onCandleClick, litSlotKey }) {
     let i = 0;
     while (i < count) {
       if (showAd && i === adStart) {
-        items.push(
-          <InlineAd
-            key={`ad-${row}-${section}`}
-            adIndex={row}
-          />
-        );
+        items.push(<InlineAd key={`ad-${row}-${section}`} adIndex={row} />);
         i += AD_SPAN;
       } else {
         const col = startCol + i;
@@ -126,7 +190,7 @@ export default function Wall({ onEmptySlotClick, onCandleClick, litSlotKey }) {
             title={
               candle
                 ? `${candle.dedicated_to_name} — apasă pentru detalii`
-                : `${section === "morti" ? "Morți" : "Vii"} · ${isTop ? "Sus" : "Jos"} · ${price} RON`
+                : `${section === "morti" ? "Adormiți" : "Vii"} · ${isTop ? "Sus" : "Jos"} · ${price} RON`
             }
           >
             <Candle candle={candle} />
@@ -142,28 +206,35 @@ export default function Wall({ onEmptySlotClick, onCandleClick, litSlotKey }) {
     <main className="wall">
       {meta?.demo_mode && (
         <div className="wall__demo-banner">
-          🧪 MOD DEMO — Plata este simulată, lumânările se aprind instant
+          MOD DEMO — Plata este simulată, lumânările se aprind instant
         </div>
       )}
 
+      <TopBanner />
+
       <div className="wall__section-headers">
         <div className="wall__section-header wall__section-header--morti">
-          ✝ Pentru Morți
+          Pentru Adormiți
         </div>
         <div className="wall__section-header wall__section-header--vii">
-          ☀ Pentru Vii
+          Pentru Vii
         </div>
       </div>
 
       <div className="wall__body">
-        {rows.map((row) => {
+        {rows.flatMap((row) => {
           const isTop = meta ? row < meta.top_threshold_row : false;
           const price = isTop
             ? (meta?.price_top_lei ?? 10)
             : (meta?.price_bottom_lei ?? 5);
+          const elements = [];
+          // Mobile-only: full-width banner every 5 rows
+          if (row > 0 && row % 5 === 0) {
+            elements.push(<BannerAd key={`banner-${row}`} adIndex={row / 5} />);
+          }
           const showMortiAd = AD_ROWS.morti.has(row);
           const showViiAd   = AD_ROWS.vii.has(row);
-          return (
+          elements.push(
             <div key={row} className="wall__row">
               <div className="wall__half wall__half--morti">
                 {renderSlots(row, 0, mortiCount, "morti", isTop, price, showMortiAd)}
@@ -173,6 +244,7 @@ export default function Wall({ onEmptySlotClick, onCandleClick, litSlotKey }) {
               </div>
             </div>
           );
+          return elements;
         })}
       </div>
 

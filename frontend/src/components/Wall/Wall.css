@@ -20,7 +20,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 4px;
-  margin-bottom: 4px;
+  margin-bottom: 5px;
   position: sticky;
   top: 0;
   z-index: 20;
@@ -62,6 +62,7 @@
 .wall__row {
   display: flex;
   gap: 4px;
+  contain: layout;
 }
 
 /* Each half is a mini-grid that always stays on its side */
@@ -139,12 +140,69 @@
   100% { outline: none;                                background: transparent;              box-shadow: none; }
 }
 
-/* ========== Inline ad slots (replace candles inside half-grid) ========== */
+/* ========== Top banner above grid ========== */
+.wall__top-banner {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+/* Mobile: 320×50 */
+.wall__top-banner-inner--mobile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 320px;
+  height: 50px;
+  background: rgba(30, 30, 30, 0.5);
+  border: 1px dashed rgba(120, 120, 120, 0.3);
+  border-radius: 5px;
+  gap: 4px;
+}
+
+.wall__top-banner-inner--desktop {
+  display: none;
+}
+
+@media (min-width: 769px) {
+  .wall__top-banner-inner--mobile  { display: none; }
+  .wall__top-banner-inner--desktop {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 728px;
+    height: 90px;
+    background: rgba(30, 30, 30, 0.5);
+    border: 1px dashed rgba(120, 120, 120, 0.3);
+    border-radius: 5px;
+    gap: 4px;
+  }
+}
+
+/* ========== Mobile-only full-width banner rows (every 5 rows) ========== */
+.wall__banner-ad--mobile-only {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 6px 0;
+}
+
+@media (min-width: 769px) {
+  .wall__banner-ad--mobile-only { display: none; }
+}
+
+/* ========== Desktop inline ad slots (inside half-grid) ========== */
 .wall__slot-ad {
+  display: none; /* hidden on mobile */
   grid-column: span 2;
   aspect-ratio: unset;
   align-self: stretch;
-  display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 5px;
@@ -155,8 +213,14 @@
   position: relative;
 }
 
-@media (min-width: 481px) { .wall__slot-ad { grid-column: span 3; } }
-@media (min-width: 769px) { .wall__slot-ad { grid-column: span 4; } }
+@media (min-width: 769px) {
+  .wall__slot-ad {
+    display: flex;
+    grid-column: span 3;
+  }
+}
+
+@media (min-width: 1024px) { .wall__slot-ad { grid-column: span 4; } }
 
 .wall__slot-ad-inner {
   width: 100%;
@@ -169,8 +233,59 @@
   position: relative;
 }
 
-/* subtle cross-hatch texture */
 .wall__slot-ad-inner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      rgba(255,255,255,0.015) 0px,
+      rgba(255,255,255,0.015) 1px,
+      transparent 1px,
+      transparent 8px
+    );
+  pointer-events: none;
+}
+
+/* ========== Shared ad text styles ========== */
+.wall__ad-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 100%;
+  height: 100%;
+}
+
+.wall__ad-placeholder-link {
+  font-size: 0.72rem;
+  color: rgba(247, 165, 0, 0.7);
+  text-decoration: underline;
+  text-align: center;
+  padding: 0 8px;
+  letter-spacing: 0.01em;
+  line-height: 1.3;
+}
+
+.wall__ad-placeholder-link:hover {
+  color: #f7c948;
+}
+.wall__banner-ad-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(30, 30, 30, 0.5);
+  border: 1px dashed rgba(120, 120, 120, 0.3);
+  border-radius: 5px;
+  gap: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.wall__banner-ad-inner::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -194,12 +309,14 @@
 }
 
 .wall__ad-placeholder-tag {
-  font-size: 0.58rem;
+  font-size: 0.65rem;
   color: rgba(140, 140, 140, 0.4);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   position: relative;
 }
+
+
 
 /* ========== Infinite scroll ========== */
 .wall__sentinel {

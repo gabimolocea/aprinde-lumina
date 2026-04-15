@@ -5,6 +5,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import { AuthProvider } from "./context/AuthContext";
 import App from "./App";
+import ContactPage from "./components/ContactPage/ContactPage";
 import "./index.css";
 
 const queryClient = new QueryClient({
@@ -13,12 +14,14 @@ const queryClient = new QueryClient({
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
+const isContactPage = window.location.pathname === "/contact";
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
         <Elements stripe={stripePromise}>
-          <App />
+          {isContactPage ? <ContactPage /> : <App />}
         </Elements>
       </QueryClientProvider>
     </AuthProvider>
