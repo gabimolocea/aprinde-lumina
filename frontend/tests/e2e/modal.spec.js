@@ -80,7 +80,7 @@ test.describe("LightCandleModal", () => {
     await submitBtn.scrollIntoViewIfNeeded();
     await submitBtn.click();
 
-    // In demo mode → success; in dev mode → may show error (both are valid outcomes)
-    await expect(page.locator(".modal__success, .modal__error")).toBeVisible({ timeout: 8000 });
+    // In demo mode → success; if phone already used → limit screen; error on failure
+    await expect(page.locator(".modal__success, .modal__error, .modal__limit")).toBeVisible({ timeout: 8000 });
   });
 });
