@@ -112,8 +112,8 @@
   z-index: 2;
 }
 
-.wall__slot--morti-top    { background: transparent; border: 1px solid rgba(255, 255, 255, 0.06); }
-.wall__slot--morti-bottom { background: transparent; border: 1px solid rgba(255, 255, 255, 0.06); }
+.wall__slot--morti-top    { background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.06); }
+.wall__slot--morti-bottom { background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.06); }
 .wall__slot--vii-top      { background: transparent; border: 1px solid rgba(247, 165, 0, 0.08); }
 .wall__slot--vii-bottom   { background: transparent; border: 1px solid rgba(247, 165, 0, 0.08); }
 
