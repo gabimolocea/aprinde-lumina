@@ -1,5 +1,11 @@
 name: lumanar
 
+domains:
+  - domain: lumanar.ro
+    type: PRIMARY
+  - domain: www.lumanar.ro
+    type: ALIAS
+
 services:
   - name: web
     dockerfile_path: Dockerfile
