@@ -26,30 +26,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY backend/ .
 
+# Make entrypoint executable
+RUN chmod +x entrypoint.sh
+
 # Copy React build — Whitenoise will serve it at the root (/, /assets/*, etc.)
 COPY --from=frontend-builder /app/dist ./frontend_dist
 
 EXPOSE 8000
 
-# Wait for DB, migrate, collect static, then start gunicorn + hourly expire loop
-CMD python -c "
-import time, os, psycopg2, urllib.parse as p
-url = os.environ.get('DATABASE_URL','')
-if url:
-    u = p.urlparse(url)
-    for i in range(30):
-        try:
-            psycopg2.connect(dbname=u.path.lstrip('/'), user=u.username, password=u.password, host=u.hostname, port=u.port or 5432)
-            break
-        except Exception as e:
-            print(f'DB not ready ({i+1}/30):', e)
-            time.sleep(2)
-" && \
-    python manage.py migrate --noinput && \
-    python manage.py collectstatic --noinput && \
-    (while true; do python manage.py expire_candles; sleep 3600; done) & \
-    gunicorn config.wsgi:application \
-      --bind 0.0.0.0:${PORT:-8000} \
-      --workers 2 \
-      --timeout 60 \
-      --access-logfile -
+CMD ["./entrypoint.sh"]
