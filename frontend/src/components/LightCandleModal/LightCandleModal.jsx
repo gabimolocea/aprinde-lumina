@@ -89,7 +89,7 @@ export default function LightCandleModal({ slot, onClose, onLit }) {
             <p className="modal__sub">
               Complet ează datele de mai jos — lumânarea se aprinde instant, gratuit.
             </p>
-            <form onSubmit={handleFreeSubmit} className="modal__form">
+            <form onSubmit={handleFreeSubmit} className="modal__form" noValidate>
               <label className="modal__label">
                 Numărul tău de telefon *
                 <input
