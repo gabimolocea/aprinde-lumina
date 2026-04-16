@@ -110,5 +110,4 @@ export async function fetchEnabledSlots() {
   const { data } = await api.get("/api/banners/slots/");
   return data; // string[]
 }
-}
 

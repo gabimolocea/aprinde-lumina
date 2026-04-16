@@ -151,11 +151,12 @@ export default function Wall({ onEmptySlotClick, onCandleClick, litSlotKey }) {
   const viiCount = COLS - splitCol;
 
   function renderSlots(row, startCol, count, section, isTop, price, showAd) {
+    const inlineEnabled = !enabledSlots || enabledSlots.includes("inline_desktop");
     const items = [];
     const adStart = count - AD_SPAN;
     let i = 0;
     while (i < count) {
-      if (showAd && i === adStart) {
+      if (showAd && inlineEnabled && i === adStart) {
         items.push(<InlineAd key={`ad-${row}-${section}`} banners={banners} enabledSlots={enabledSlots} />);
         i += AD_SPAN;
       } else {
