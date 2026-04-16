@@ -148,6 +148,8 @@ class WallMetaView(APIView):
     Returns wall dimensions, price thresholds, and grid config.
     """
 
+    permission_classes = [AllowAny]
+
     def get(self, request):
         threshold_row = int(WALL_TOTAL_ROWS * settings.CANDLE_TOP_THRESHOLD)
         total_lit_count = Candle.objects.exclude(status=Candle.Status.PENDING).count()
