@@ -195,13 +195,18 @@ jobs:
           import os
           spec = open('.do/app.yaml').read()
           spec = spec.replace(
+              '- key: DJANGO_SECRET_KEY\n        value: \"\"\n        type: SECRET',
+              '- key: DJANGO_SECRET_KEY\n        value: \"' + os.environ['DJANGO_SECRET_KEY'] + '\"\n        type: SECRET'
+          )
+          spec = spec.replace(
               '- key: DATABASE_URL\n        value: \"\"\n        type: SECRET',
               '- key: DATABASE_URL\n        value: \"' + os.environ['DATABASE_URL'] + '\"\n        type: SECRET'
           )
           open('.do/app.yaml', 'w').write(spec)
-          print('Spec updated with DATABASE_URL secret.')
+          print('Spec updated with secrets.')
           "
         env:
+          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       - name: Deploy app
