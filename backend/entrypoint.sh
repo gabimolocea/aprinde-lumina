@@ -12,12 +12,17 @@ for i in range(30):
         conn = psycopg2.connect(url)
         conn.autocommit = True
         cur = conn.cursor()
-        # PG 15+ revoked CREATE on public schema; grant it back to ourselves
-        try:
-            cur.execute('GRANT ALL ON SCHEMA public TO CURRENT_USER')
-            print('Schema permissions granted.')
-        except Exception as ge:
-            print(f'Grant skipped (may already have access): {ge}')
+
+        # Print current user for debugging
+        cur.execute('SELECT current_user, current_database()')
+        row = cur.fetchone()
+        print(f'Connected as user={row[0]} db={row[1]}')
+
+        # PG 15/16 revoked CREATE on public from PUBLIC role.
+        # Restore it by granting to PUBLIC (all users). This is safe for a private app DB.
+        cur.execute('GRANT CREATE ON SCHEMA public TO PUBLIC')
+        print('Schema CREATE granted to PUBLIC.')
+
         conn.close()
         print('Database ready.')
         break

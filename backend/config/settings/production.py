@@ -31,6 +31,10 @@ import urllib.parse as _urlparse
 _database_url = os.environ.get("DATABASE_URL", "")
 if _database_url:
     _u = _urlparse.urlparse(_database_url)
+    _ssl = dict(_urlparse.parse_qsl(_u.query))
+    _db_opts = {}
+    if _ssl.get("sslmode"):
+        _db_opts["sslmode"] = _ssl["sslmode"]
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
@@ -39,6 +43,7 @@ if _database_url:
             "PASSWORD": _u.password,
             "HOST": _u.hostname,
             "PORT": str(_u.port or 5432),
+            "OPTIONS": _db_opts,
         }
     }
 else:
