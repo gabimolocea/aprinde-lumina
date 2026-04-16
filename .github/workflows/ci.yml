@@ -189,5 +189,20 @@ jobs:
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
+      - name: Inject secrets into spec
+        run: |
+          python3 -c "
+          import os
+          spec = open('.do/app.yaml').read()
+          spec = spec.replace(
+              '- key: DATABASE_URL\n        value: \"\"\n        type: SECRET',
+              '- key: DATABASE_URL\n        value: \"' + os.environ['DATABASE_URL'] + '\"\n        type: SECRET'
+          )
+          open('.do/app.yaml', 'w').write(spec)
+          print('Spec updated with DATABASE_URL secret.')
+          "
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
       - name: Deploy app
         run: doctl apps create --spec .do/app.yaml --upsert --wait
