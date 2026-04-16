@@ -25,6 +25,30 @@ for i in range(30):
 "
 fi
 
+echo "Granting schema permissions (PG 15+ fix)..."
+python -c "
+import os, psycopg2, urllib.parse as p
+url = os.environ.get('DATABASE_URL', '')
+if url:
+    u = p.urlparse(url)
+    try:
+        conn = psycopg2.connect(
+            dbname=u.path.lstrip('/'),
+            user=u.username,
+            password=u.password,
+            host=u.hostname,
+            port=u.port or 5432,
+            sslmode='require'
+        )
+        conn.autocommit = True
+        cur = conn.cursor()
+        cur.execute('GRANT ALL ON SCHEMA public TO CURRENT_USER')
+        conn.close()
+        print('Schema permissions granted.')
+    except Exception as e:
+        print(f'Grant skipped: {e}')
+"
+
 echo "Running migrations..."
 python manage.py migrate --noinput
 
