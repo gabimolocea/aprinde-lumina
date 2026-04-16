@@ -16,6 +16,10 @@ _do_domain = os.environ.get("APP_DOMAIN", "")
 if _do_domain and _do_domain not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(_do_domain)
 
+# Always allow DO App Platform health-check IPs / internal hostnames
+if ".ondigitalocean.app" not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(".ondigitalocean.app")
+
 # Serve React SPA — Whitenoise serves frontend_dist/ at the URL root
 # Only set WHITENOISE_ROOT if the directory exists (multi-stage Docker build)
 _frontend_dist = BASE_DIR / "frontend_dist"
