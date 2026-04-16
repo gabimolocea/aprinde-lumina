@@ -20,17 +20,33 @@ if _frontend_dist.exists():
 
 CORS_ALLOWED_ORIGINS = [o.strip() for o in os.environ.get("CORS_ORIGINS", "").split(",") if o.strip()]
 
-# Railway PostgreSQL — provides PGHOST, PGPORT, PGDATABASE, PGUSER, PGPASSWORD
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("PGDATABASE", os.environ.get("DB_NAME", "aprinde_lumina")),
-        "USER": os.environ.get("PGUSER", os.environ.get("DB_USER", "postgres")),
-        "PASSWORD": os.environ.get("PGPASSWORD", os.environ.get("DB_PASSWORD", "")),
-        "HOST": os.environ.get("PGHOST", os.environ.get("DB_HOST", "localhost")),
-        "PORT": os.environ.get("PGPORT", os.environ.get("DB_PORT", "5432")),
+# Railway PostgreSQL — supports DATABASE_URL (preferred) or individual PG* vars
+import urllib.parse as _urlparse
+
+_database_url = os.environ.get("DATABASE_URL", "")
+if _database_url:
+    _u = _urlparse.urlparse(_database_url)
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": _u.path.lstrip("/"),
+            "USER": _u.username,
+            "PASSWORD": _u.password,
+            "HOST": _u.hostname,
+            "PORT": str(_u.port or 5432),
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.environ.get("PGDATABASE", os.environ.get("DB_NAME", "aprinde_lumina")),
+            "USER": os.environ.get("PGUSER", os.environ.get("DB_USER", "postgres")),
+            "PASSWORD": os.environ.get("PGPASSWORD", os.environ.get("DB_PASSWORD", "")),
+            "HOST": os.environ.get("PGHOST", os.environ.get("DB_HOST", "localhost")),
+            "PORT": os.environ.get("PGPORT", os.environ.get("DB_PORT", "5432")),
+        }
+    }
 
 # Security
 SECURE_HSTS_SECONDS = 31536000
