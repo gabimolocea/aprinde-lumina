@@ -12,10 +12,11 @@ if _railway_domain and _railway_domain not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(_railway_domain)
 
 # Serve React SPA — Whitenoise serves frontend_dist/ at the URL root
-WHITENOISE_ROOT = BASE_DIR / "frontend_dist"
-
-# Django template lookup for the SPA catch-all (index.html)
-TEMPLATES[0]["DIRS"] = [BASE_DIR / "frontend_dist"]
+# Only set WHITENOISE_ROOT if the directory exists (multi-stage Docker build)
+_frontend_dist = BASE_DIR / "frontend_dist"
+if _frontend_dist.exists():
+    WHITENOISE_ROOT = _frontend_dist
+    TEMPLATES[0]["DIRS"] = [_frontend_dist]
 
 CORS_ALLOWED_ORIGINS = [o.strip() for o in os.environ.get("CORS_ORIGINS", "").split(",") if o.strip()]
 
