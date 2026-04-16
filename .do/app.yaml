@@ -26,7 +26,7 @@ services:
         value: ""
         type: SECRET
       - key: SECURE_SSL_REDIRECT
-        value: "true"
+        value: "false"
       - key: STRIPE_SECRET_KEY
         value: ""
         type: SECRET
