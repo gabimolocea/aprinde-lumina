@@ -1,9 +1,16 @@
 from .base import *
 import os
+from pathlib import Path
 
 DEBUG = False
 
 ALLOWED_HOSTS = [h.strip() for h in os.environ.get("ALLOWED_HOSTS", "").split(",") if h.strip()]
+
+# Serve React SPA — Whitenoise serves frontend_dist/ at the URL root
+WHITENOISE_ROOT = BASE_DIR / "frontend_dist"
+
+# Django template lookup for the SPA catch-all (index.html)
+TEMPLATES[0]["DIRS"] = [BASE_DIR / "frontend_dist"]
 
 CORS_ALLOWED_ORIGINS = [o.strip() for o in os.environ.get("CORS_ORIGINS", "").split(",") if o.strip()]
 
