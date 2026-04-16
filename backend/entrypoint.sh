@@ -1,7 +1,9 @@
 #!/bin/sh
 set -e
 
-# Wait for PostgreSQL to be ready and grant public schema CREATE (PG 15/16 fix)
+# Wait for PostgreSQL to be ready, then create a schema owned by the app user.
+# This avoids PG 15/16 "permission denied for schema public" (public schema
+# CREATE was revoked from PUBLIC by default in PG 15).
 if [ -n "$DATABASE_URL" ]; then
     echo "Waiting for database..."
     python -c "
@@ -12,17 +14,12 @@ for i in range(30):
         conn = psycopg2.connect(url)
         conn.autocommit = True
         cur = conn.cursor()
-
-        # Print current user for debugging
         cur.execute('SELECT current_user, current_database()')
         row = cur.fetchone()
         print(f'Connected as user={row[0]} db={row[1]}')
-
-        # PG 15/16 revoked CREATE on public from PUBLIC role.
-        # Restore it by granting to PUBLIC (all users). This is safe for a private app DB.
-        cur.execute('GRANT CREATE ON SCHEMA public TO PUBLIC')
-        print('Schema CREATE granted to PUBLIC.')
-
+        # Create a schema owned by current user — guaranteed to have CREATE.
+        cur.execute('CREATE SCHEMA IF NOT EXISTS app')
+        print('Schema app ready (owned by current user).')
         conn.close()
         print('Database ready.')
         break

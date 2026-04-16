@@ -32,7 +32,7 @@ _database_url = os.environ.get("DATABASE_URL", "")
 if _database_url:
     _u = _urlparse.urlparse(_database_url)
     _ssl = dict(_urlparse.parse_qsl(_u.query))
-    _db_opts = {}
+    _db_opts = {"options": "-c search_path=app,public"}
     if _ssl.get("sslmode"):
         _db_opts["sslmode"] = _ssl["sslmode"]
     DATABASES = {
