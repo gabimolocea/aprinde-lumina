@@ -39,14 +39,14 @@
 }
 
 .wall__section-header--morti {
-  background: transparent;
-  color: rgba(200, 160, 80, 0.6);
+  background: rgba(0, 0, 0, 0.65);
+  color: #aaaaaa;
   border: none;
 }
 
 .wall__section-header--vii {
-  background: transparent;
-  color: rgba(200, 160, 80, 0.6);
+  background: rgba(200, 140, 40, 0.18);
+  color: #f7c948;
   border: none;
 }
 
@@ -68,7 +68,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   align-items: start;
-  gap: 0;
+  gap: 2px;
   min-width: 0;
 }
 
@@ -79,13 +79,13 @@
 }
 
 @media (min-width: 481px) {
-  .wall__half { grid-template-columns: repeat(3, 1fr); gap: 0; }
+  .wall__half { grid-template-columns: repeat(3, 1fr); gap: 2px; }
   .wall__row  { gap: 0; }
   .wall__half--vii { padding-left: 0; }
 }
 
 @media (min-width: 769px) {
-  .wall__half { grid-template-columns: repeat(12, 1fr); gap: 0; }
+  .wall__half { grid-template-columns: repeat(12, 1fr); gap: 2px; }
   .wall__row  { gap: 0; }
   .wall__half--vii { padding-left: 0; }
 }
@@ -112,10 +112,10 @@
   z-index: 2;
 }
 
-.wall__slot--morti-top    { background: transparent; border: none; }
-.wall__slot--morti-bottom { background: transparent; border: none; }
-.wall__slot--vii-top      { background: transparent; border: none; }
-.wall__slot--vii-bottom   { background: transparent; border: none; }
+.wall__slot--morti-top    { background: transparent; border: 1px solid rgba(255, 255, 255, 0.06); }
+.wall__slot--morti-bottom { background: transparent; border: 1px solid rgba(255, 255, 255, 0.06); }
+.wall__slot--vii-top      { background: transparent; border: 1px solid rgba(247, 165, 0, 0.08); }
+.wall__slot--vii-bottom   { background: transparent; border: 1px solid rgba(247, 165, 0, 0.08); }
 
 .wall__slot--morti-top:hover,
 .wall__slot--morti-bottom:hover { background: rgba(200, 150, 60, 0.12); }
