@@ -18,14 +18,12 @@ services:
       - key: DJANGO_SETTINGS_MODULE
         value: config.settings.production
       - key: DJANGO_SECRET_KEY
-        value: ""           # setează în UI sau lasă Railway să injecteze
+        value: ""
         type: SECRET
       - key: ALLOWED_HOSTS
-        value: ""           # ex: lumanar.ro,www.lumanar.ro
+        value: ""
       - key: DATABASE_URL
         value: ${lumanar-db.DATABASE_URL}
-      - key: REDIS_URL
-        value: ${lumanar-redis.REDIS_URL}
       - key: SECURE_SSL_REDIRECT
         value: "true"
       - key: STRIPE_SECRET_KEY
@@ -43,13 +41,26 @@ services:
       - key: TWILIO_FROM_NUMBER
         value: ""
 
+jobs:
+  - name: expire-candles
+    kind: CRON
+    schedule: "0 * * * *"   # every hour
+    dockerfile_path: Dockerfile
+    github:
+      repo: gabimolocea/aprinde-lumina
+      branch: main
+    run_command: python manage.py expire_candles
+    envs:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.production
+      - key: DJANGO_SECRET_KEY
+        value: ""
+        type: SECRET
+      - key: DATABASE_URL
+        value: ${lumanar-db.DATABASE_URL}
+
 databases:
   - name: lumanar-db
     engine: PG
     version: "16"
-    production: false
-
-  - name: lumanar-redis
-    engine: REDIS
-    version: "7"
     production: false
