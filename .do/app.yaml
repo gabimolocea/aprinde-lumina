@@ -44,7 +44,8 @@ services:
 jobs:
   - name: expire-candles
     kind: CRON
-    schedule: "0 * * * *"   # every hour
+    schedule:
+      value: "0 * * * *"
     dockerfile_path: Dockerfile
     github:
       repo: gabimolocea/aprinde-lumina
