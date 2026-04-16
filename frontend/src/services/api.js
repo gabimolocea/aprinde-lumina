@@ -90,3 +90,13 @@ export async function logout(token) {
   );
 }
 
+/**
+ * Fetch active banners, optionally filtered by placement.
+ * Placements: top_mobile | top_desktop | strip_mobile | inline_desktop
+ */
+export async function fetchBanners(placement) {
+  const params = placement ? { placement } : {};
+  const { data } = await api.get("/api/banners/", { params });
+  return data; // array of { id, placement, image_url, link_url, width, height }
+}
+

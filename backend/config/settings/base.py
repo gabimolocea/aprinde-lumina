@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     "apps.payments",
     "apps.contact",
     "apps.analytics",
+    "apps.banners",
     "rest_framework.authtoken",
 ]
 

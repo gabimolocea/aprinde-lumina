@@ -10,6 +10,7 @@ urlpatterns = [
     path("api/candles/", include("apps.candles.urls")),
     path("api/payments/", include("apps.payments.urls")),
     path("api/contact/", include("apps.contact.urls")),
+    path("api/banners/", include("apps.banners.urls")),
     # SPA catch-all — serves React's index.html for all non-API routes
     re_path(r"^(?!(api|admin|media)/).*$", TemplateView.as_view(template_name="index.html")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
