@@ -1,9 +1,7 @@
 #!/bin/sh
 set -e
 
-# Wait for PostgreSQL to be ready, then create a schema owned by the app user.
-# This avoids PG 15/16 "permission denied for schema public" (public schema
-# CREATE was revoked from PUBLIC by default in PG 15).
+# Wait for PostgreSQL to be ready
 if [ -n "$DATABASE_URL" ]; then
     echo "Waiting for database..."
     python -c "
@@ -12,14 +10,6 @@ url = os.environ.get('DATABASE_URL', '')
 for i in range(30):
     try:
         conn = psycopg2.connect(url)
-        conn.autocommit = True
-        cur = conn.cursor()
-        cur.execute('SELECT current_user, current_database()')
-        row = cur.fetchone()
-        print(f'Connected as user={row[0]} db={row[1]}')
-        # Create a schema owned by current user — guaranteed to have CREATE.
-        cur.execute('CREATE SCHEMA IF NOT EXISTS app')
-        print('Schema app ready (owned by current user).')
         conn.close()
         print('Database ready.')
         break

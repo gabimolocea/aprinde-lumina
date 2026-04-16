@@ -23,7 +23,8 @@ services:
       - key: ALLOWED_HOSTS
         value: ""
       - key: DATABASE_URL
-        value: ${lumanar-db.DATABASE_URL}
+        value: ""
+        type: SECRET
       - key: SECURE_SSL_REDIRECT
         value: "true"
       - key: STRIPE_SECRET_KEY
@@ -41,8 +42,3 @@ services:
       - key: TWILIO_FROM_NUMBER
         value: ""
 
-databases:
-  - name: lumanar-db
-    engine: PG
-    version: "16"
-    production: false
