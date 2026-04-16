@@ -1,7 +1,7 @@
 .header {
   padding: 0.5rem 1rem 0.5rem;
-  background: linear-gradient(180deg, #2c1000 0%, #1a0a00 100%);
-  border-bottom: 1px solid #5a2d00;
+  background: transparent;
+  border-bottom: none;
   overflow: visible;
 }
 
