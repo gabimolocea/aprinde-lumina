@@ -31,7 +31,7 @@ COPY --from=frontend-builder /app/dist ./frontend_dist
 
 EXPOSE 8000
 
-# Wait for DB then migrate and start
+# Wait for DB, migrate, collect static, then start gunicorn + hourly expire loop
 CMD python -c "
 import time, os, psycopg2, urllib.parse as p
 url = os.environ.get('DATABASE_URL','')
@@ -47,6 +47,7 @@ if url:
 " && \
     python manage.py migrate --noinput && \
     python manage.py collectstatic --noinput && \
+    (while true; do python manage.py expire_candles; sleep 3600; done) & \
     gunicorn config.wsgi:application \
       --bind 0.0.0.0:${PORT:-8000} \
       --workers 2 \

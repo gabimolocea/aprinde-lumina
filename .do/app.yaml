@@ -41,25 +41,6 @@ services:
       - key: TWILIO_FROM_NUMBER
         value: ""
 
-jobs:
-  - name: expire-candles
-    kind: CRON
-    schedule:
-      value: "0 * * * *"
-    dockerfile_path: Dockerfile
-    github:
-      repo: gabimolocea/aprinde-lumina
-      branch: main
-    run_command: python manage.py expire_candles
-    envs:
-      - key: DJANGO_SETTINGS_MODULE
-        value: config.settings.production
-      - key: DJANGO_SECRET_KEY
-        value: ""
-        type: SECRET
-      - key: DATABASE_URL
-        value: ${lumanar-db.DATABASE_URL}
-
 databases:
   - name: lumanar-db
     engine: PG
