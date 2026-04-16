@@ -11,7 +11,14 @@ html {
 }
 
 body {
-  background: #1a0a00;
+  background-color: #1a0a00;
+  background-image:
+    /* sand noise — fine grain */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E"),
+    /* warm radial glow — candlelight source bottom-center */
+    radial-gradient(ellipse 70% 55% at 50% 110%, rgba(160, 70, 10, 0.35) 0%, transparent 70%);
+  background-repeat: repeat, no-repeat;
+  background-size: 200px 200px, cover;
   color: #f5e6c8;
   font-family: "Inter", sans-serif;
   font-size: 16px; /* base size — good for pensioners */
