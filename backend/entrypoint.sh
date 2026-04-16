@@ -1,22 +1,24 @@
 #!/bin/sh
 set -e
 
-# Wait for PostgreSQL to be ready
+# Wait for PostgreSQL to be ready and grant public schema CREATE (PG 15/16 fix)
 if [ -n "$DATABASE_URL" ]; then
     echo "Waiting for database..."
     python -c "
-import time, os, psycopg2, urllib.parse as p
+import time, os, psycopg2
 url = os.environ.get('DATABASE_URL', '')
-u = p.urlparse(url)
 for i in range(30):
     try:
-        psycopg2.connect(
-            dbname=u.path.lstrip('/'),
-            user=u.username,
-            password=u.password,
-            host=u.hostname,
-            port=u.port or 5432
-        )
+        conn = psycopg2.connect(url)
+        conn.autocommit = True
+        cur = conn.cursor()
+        # PG 15+ revoked CREATE on public schema; grant it back to ourselves
+        try:
+            cur.execute('GRANT ALL ON SCHEMA public TO CURRENT_USER')
+            print('Schema permissions granted.')
+        except Exception as ge:
+            print(f'Grant skipped (may already have access): {ge}')
+        conn.close()
         print('Database ready.')
         break
     except Exception as e:
@@ -24,30 +26,6 @@ for i in range(30):
         time.sleep(2)
 "
 fi
-
-echo "Granting schema permissions (PG 15+ fix)..."
-python -c "
-import os, psycopg2, urllib.parse as p
-url = os.environ.get('DATABASE_URL', '')
-if url:
-    u = p.urlparse(url)
-    try:
-        conn = psycopg2.connect(
-            dbname=u.path.lstrip('/'),
-            user=u.username,
-            password=u.password,
-            host=u.hostname,
-            port=u.port or 5432,
-            sslmode='require'
-        )
-        conn.autocommit = True
-        cur = conn.cursor()
-        cur.execute('GRANT ALL ON SCHEMA public TO CURRENT_USER')
-        conn.close()
-        print('Schema permissions granted.')
-    except Exception as e:
-        print(f'Grant skipped: {e}')
-"
 
 echo "Running migrations..."
 python manage.py migrate --noinput
