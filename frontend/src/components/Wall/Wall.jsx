@@ -1,7 +1,7 @@
 import { useMemo, useEffect, useState, memo } from "react";
 import { useInfiniteWall } from "../../hooks/useInfiniteWall";
 import { useWallMeta } from "../../hooks/useWallMeta";
-import { fetchBanners } from "../../services/api";
+import { fetchBanners, fetchEnabledSlots } from "../../services/api";
 import Candle from "../Candle/Candle";
 import "./Wall.css";
 
@@ -44,35 +44,43 @@ function buildAdRows(maxRow = 400) {
 const AD_ROWS = buildAdRows(400);
 
 /* Banner above the grid: 320×50 mobile / 728×90 desktop */
-const TopBanner = memo(function TopBanner({ banners }) {
-  const mobile  = pickRandom(banners?.top_mobile);
-  const desktop = pickRandom(banners?.top_desktop);
+const TopBanner = memo(function TopBanner({ banners, enabledSlots }) {
+  const mobileOn  = !enabledSlots || enabledSlots.includes("top_mobile");
+  const desktopOn = !enabledSlots || enabledSlots.includes("top_desktop");
+  if (!mobileOn && !desktopOn) return null;
+  const mobile  = mobileOn  ? pickRandom(banners?.top_mobile)  : null;
+  const desktop = desktopOn ? pickRandom(banners?.top_desktop) : null;
   return (
     <div className="wall__top-banner">
-      <div className="wall__top-banner-inner wall__top-banner-inner--mobile">
-        {mobile ? (
-          <a href={mobile.link_url} target="_blank" rel="noopener noreferrer">
-            <img src={mobile.image_url} width={mobile.width} height={mobile.height} alt="Banner" style={{ display: "block", maxWidth: "100%" }} />
-          </a>
-        ) : (
-          <AdPlaceholder width={320} height={50} />
-        )}
-      </div>
-      <div className="wall__top-banner-inner wall__top-banner-inner--desktop">
-        {desktop ? (
-          <a href={desktop.link_url} target="_blank" rel="noopener noreferrer">
-            <img src={desktop.image_url} width={desktop.width} height={desktop.height} alt="Banner" style={{ display: "block", maxWidth: "100%" }} />
-          </a>
-        ) : (
-          <AdPlaceholder width={728} height={90} />
-        )}
-      </div>
+      {mobileOn && (
+        <div className="wall__top-banner-inner wall__top-banner-inner--mobile">
+          {mobile ? (
+            <a href={mobile.link_url} target="_blank" rel="noopener noreferrer">
+              <img src={mobile.image_url} width={mobile.width} height={mobile.height} alt="Banner" style={{ display: "block", maxWidth: "100%" }} />
+            </a>
+          ) : (
+            <AdPlaceholder width={320} height={50} />
+          )}
+        </div>
+      )}
+      {desktopOn && (
+        <div className="wall__top-banner-inner wall__top-banner-inner--desktop">
+          {desktop ? (
+            <a href={desktop.link_url} target="_blank" rel="noopener noreferrer">
+              <img src={desktop.image_url} width={desktop.width} height={desktop.height} alt="Banner" style={{ display: "block", maxWidth: "100%" }} />
+            </a>
+          ) : (
+            <AdPlaceholder width={728} height={90} />
+          )}
+        </div>
+      )}
     </div>
   );
 });
 
 /* Mobile-only full-width banner row */
-const BannerAd = memo(function BannerAd({ banners }) {
+const BannerAd = memo(function BannerAd({ banners, enabledSlots }) {
+  if (enabledSlots && !enabledSlots.includes("strip_mobile")) return null;
   const banner = pickRandom(banners?.strip_mobile);
   const fmt = { width: 320, height: 50 };
   return (
@@ -91,7 +99,8 @@ const BannerAd = memo(function BannerAd({ banners }) {
 });
 
 /* Desktop-only inline ad inside half-grid */
-const InlineAd = memo(function InlineAd({ banners }) {
+const InlineAd = memo(function InlineAd({ banners, enabledSlots }) {
+  if (enabledSlots && !enabledSlots.includes("inline_desktop")) return null;
   const banner = pickRandom(banners?.inline_desktop);
   const fmt = { width: 300, height: 250 };
   return (
@@ -115,6 +124,7 @@ export default function Wall({ onEmptySlotClick, onCandleClick, litSlotKey }) {
 
   // Fetch all active banners once; group by placement for easy lookup
   const [banners, setBanners] = useState({});
+  const [enabledSlots, setEnabledSlots] = useState(null); // null = still loading
   useEffect(() => {
     fetchBanners().then((list) => {
       const grouped = {};
@@ -124,6 +134,7 @@ export default function Wall({ onEmptySlotClick, onCandleClick, litSlotKey }) {
       });
       setBanners(grouped);
     }).catch(() => {});
+    fetchEnabledSlots().then(setEnabledSlots).catch(() => setEnabledSlots([]));
   }, []);
 
   const splitCol = meta?.split_col ?? 12;
@@ -145,7 +156,7 @@ export default function Wall({ onEmptySlotClick, onCandleClick, litSlotKey }) {
     let i = 0;
     while (i < count) {
       if (showAd && i === adStart) {
-        items.push(<InlineAd key={`ad-${row}-${section}`} banners={banners} />);
+        items.push(<InlineAd key={`ad-${row}-${section}`} banners={banners} enabledSlots={enabledSlots} />);
         i += AD_SPAN;
       } else {
         const col = startCol + i;
@@ -179,7 +190,9 @@ export default function Wall({ onEmptySlotClick, onCandleClick, litSlotKey }) {
 
   return (
     <main className="wall">
-      <TopBanner banners={banners} />
+      {(enabledSlots === null || enabledSlots.includes("top_mobile") || enabledSlots.includes("top_desktop")) && (
+        <TopBanner banners={banners} enabledSlots={enabledSlots} />
+      )}
 
       <div className="wall__section-headers">
         <div className="wall__section-header wall__section-header--morti">
@@ -199,7 +212,7 @@ export default function Wall({ onEmptySlotClick, onCandleClick, litSlotKey }) {
           const elements = [];
           // Mobile-only: full-width banner every 5 rows
           if (row > 0 && row % 5 === 0) {
-            elements.push(<BannerAd key={`banner-${row}`} banners={banners} />);
+            elements.push(<BannerAd key={`banner-${row}`} banners={banners} enabledSlots={enabledSlots} />);
           }
           const showMortiAd = AD_ROWS.morti.has(row);
           const showViiAd   = AD_ROWS.vii.has(row);

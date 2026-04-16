@@ -1,6 +1,23 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Banner
+from .models import Banner, BannerSlot, PLACEMENT_CHOICES
+
+
+@admin.register(BannerSlot)
+class BannerSlotAdmin(admin.ModelAdmin):
+    list_display  = ["get_placement_display", "is_enabled"]
+    list_editable = ["is_enabled"]
+    ordering      = ["placement"]
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        # Auto-create missing slots so all 4 placements always appear
+        existing = set(qs.values_list("placement", flat=True))
+        missing  = [p for p, _ in PLACEMENT_CHOICES if p not in existing]
+        if missing:
+            BannerSlot.objects.bulk_create([BannerSlot(placement=p) for p in missing])
+            qs = super().get_queryset(request)
+        return qs
 
 
 @admin.register(Banner)

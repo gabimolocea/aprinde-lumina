@@ -100,3 +100,15 @@ export async function fetchBanners(placement) {
   return data; // array of { id, placement, image_url, link_url, width, height }
 }
 
+/**
+ * Fetch enabled banner placements.
+ * Returns an array of placement keys that are currently visible, e.g.:
+ *   ["top_mobile", "top_desktop", "inline_desktop"]
+ * Missing placements are treated as enabled by default.
+ */
+export async function fetchEnabledSlots() {
+  const { data } = await api.get("/api/banners/slots/");
+  return data; // string[]
+}
+}
+
