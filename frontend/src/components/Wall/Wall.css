@@ -62,7 +62,6 @@
 .wall__row {
   display: flex;
   gap: 4px;
-  contain: layout;
 }
 
 /* Each half is a mini-grid that always stays on its side */
@@ -70,6 +69,7 @@
   flex: 1;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  align-items: start;
   gap: 4px;
   min-width: 0;
 }

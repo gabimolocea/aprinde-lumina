@@ -7,7 +7,7 @@ import "./Wall.css";
 /* Shared placeholder shown when AdSense is not configured */
 function AdPlaceholder({ width, height }) {
   return (
-    <div className="wall__ad-placeholder" style={{ width: width + "px", height: height + "px" }}>
+    <div className="wall__ad-placeholder" style={{ maxWidth: width + "px" }}>
       <span className="wall__ad-placeholder-label">{width}×{height}</span>
       <a href="/contact" className="wall__ad-placeholder-link">
         Contactează-ne pentru a pune reclama ta aici
