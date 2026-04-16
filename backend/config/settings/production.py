@@ -70,12 +70,37 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-# Whitenoise compressed static files
-STORAGES = {
-    "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-    },
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
+# Whitenoise compressed static files + optional DO Spaces for media uploads
+_spaces_key    = os.environ.get("DO_SPACES_KEY", "")
+_spaces_secret = os.environ.get("DO_SPACES_SECRET", "")
+_spaces_bucket = os.environ.get("DO_SPACES_BUCKET", "")
+_spaces_region = os.environ.get("DO_SPACES_REGION", "fra1")
+
+if _spaces_key and _spaces_secret and _spaces_bucket:
+    # Use DO Spaces (S3-compatible) for uploaded media — persistent across deploys
+    AWS_ACCESS_KEY_ID       = _spaces_key
+    AWS_SECRET_ACCESS_KEY   = _spaces_secret
+    AWS_STORAGE_BUCKET_NAME = _spaces_bucket
+    AWS_S3_REGION_NAME      = _spaces_region
+    AWS_S3_ENDPOINT_URL     = f"https://{_spaces_region}.digitaloceanspaces.com"
+    AWS_S3_CUSTOM_DOMAIN    = f"{_spaces_bucket}.{_spaces_region}.cdn.digitaloceanspaces.com"
+    AWS_DEFAULT_ACL         = "public-read"
+    AWS_S3_FILE_OVERWRITE   = False
+    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
+else:
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }

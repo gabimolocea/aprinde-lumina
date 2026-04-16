@@ -11,7 +11,8 @@ class Banner(models.Model):
 
     title      = models.CharField(max_length=120, help_text="Nume intern pentru identificare")
     placement  = models.CharField(max_length=20, choices=PLACEMENT_CHOICES, db_index=True)
-    image_url  = models.URLField(help_text="URL-ul imaginii bannerului")
+    image      = models.ImageField(upload_to="banners/", blank=True, null=True, help_text="Încarcă o imagine (opțional dacă folosești URL)")
+    image_url  = models.URLField(blank=True, help_text="URL extern al imaginii (opțional dacă încarci fișier)")
     link_url   = models.URLField(help_text="URL la care duce click-ul (include https://)")
     width      = models.PositiveIntegerField(help_text="Lățime în px (ex: 320)")
     height     = models.PositiveIntegerField(help_text="Înălțime în px (ex: 50)")
@@ -25,3 +26,10 @@ class Banner(models.Model):
 
     def __str__(self):
         return f"{self.title} [{self.get_placement_display()}] {'✓' if self.is_active else '✗'}"
+
+    @property
+    def effective_image_url(self):
+        """Returns uploaded image URL if available, else the manually entered URL."""
+        if self.image:
+            return self.image.url
+        return self.image_url

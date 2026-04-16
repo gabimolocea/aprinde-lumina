@@ -16,4 +16,4 @@ def banner_list(request):
     placement = request.GET.get("placement")
     if placement:
         qs = qs.filter(placement=placement)
-    return Response(BannerSerializer(qs, many=True).data)
+    return Response(BannerSerializer(qs, many=True, context={"request": request}).data)
