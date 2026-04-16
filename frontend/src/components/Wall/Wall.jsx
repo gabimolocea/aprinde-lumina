@@ -204,12 +204,6 @@ export default function Wall({ onEmptySlotClick, onCandleClick, litSlotKey }) {
 
   return (
     <main className="wall">
-      {meta?.demo_mode && (
-        <div className="wall__demo-banner">
-          MOD DEMO — Plata este simulată, lumânările se aprind instant
-        </div>
-      )}
-
       <TopBanner />
 
       <div className="wall__section-headers">

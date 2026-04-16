@@ -12,16 +12,10 @@ export default function Header({ user, onLogout }) {
     <header className="header">
       <div className="header__top">
         <h1 className="header__title">
-          <span className="header__deco-candle">
-            <Candle candle={DECO_CANDLE} />
-          </span>
-          {" "}Lumânar
+          Lumânar
         </h1>
         {count !== null && (
           <span className="header__candle-count">
-            <span className="header__deco-candle">
-              <Candle candle={DECO_CANDLE} />
-            </span>
             {count.toLocaleString("ro-RO")} lumânări aprinse
           </span>
         )}

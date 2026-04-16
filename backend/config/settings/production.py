@@ -11,6 +11,11 @@ _railway_domain = os.environ.get("RAILWAY_PUBLIC_DOMAIN", "")
 if _railway_domain and _railway_domain not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(_railway_domain)
 
+# Automatically allow DigitalOcean App Platform domain
+_do_domain = os.environ.get("APP_DOMAIN", "")
+if _do_domain and _do_domain not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(_do_domain)
+
 # Serve React SPA — Whitenoise serves frontend_dist/ at the URL root
 # Only set WHITENOISE_ROOT if the directory exists (multi-stage Docker build)
 _frontend_dist = BASE_DIR / "frontend_dist"
