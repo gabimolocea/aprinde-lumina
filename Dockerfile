@@ -31,7 +31,21 @@ COPY --from=frontend-builder /app/dist ./frontend_dist
 
 EXPOSE 8000
 
-CMD python manage.py migrate --noinput && \
+# Wait for DB then migrate and start
+CMD python -c "
+import time, os, psycopg2, urllib.parse as p
+url = os.environ.get('DATABASE_URL','')
+if url:
+    u = p.urlparse(url)
+    for i in range(30):
+        try:
+            psycopg2.connect(dbname=u.path.lstrip('/'), user=u.username, password=u.password, host=u.hostname, port=u.port or 5432)
+            break
+        except Exception as e:
+            print(f'DB not ready ({i+1}/30):', e)
+            time.sleep(2)
+" && \
+    python manage.py migrate --noinput && \
     python manage.py collectstatic --noinput && \
     gunicorn config.wsgi:application \
       --bind 0.0.0.0:${PORT:-8000} \
